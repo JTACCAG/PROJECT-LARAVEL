@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\UserLimitController;
+
 Route::post("register", [UserController::class, "register"]);
 Route::post("login", [UserController::class, "login"]);
+Route::get("test", [UserLimitController::class, "verifyLimit"]);
 Route::group(["middleware" => ["auth:api"]], function(){
     Route::get("profile", [UserController::class, "profile"]);
     Route::get("logout", [UserController::class, "logout"]);

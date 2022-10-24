@@ -23,9 +23,13 @@ class UserLimitController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(string $request, string $idUser)
     {
-        //
+        $userLimit = new UserLimit();
+        $userLimit->user_id = $idUser;
+        $userLimit->request = $request;
+        $userLimit->save();
+        return $userLimit;
     }
 
     /**
@@ -39,6 +43,23 @@ class UserLimitController extends Controller
         //
     }
 
+    public function verifyLimit(string $request, string $idUser)
+    {
+        $listUserLimit = UserLimit::
+                                    where('request', $request)
+                                    ->where('user_id', $idUser)
+                                    ->orderByDesc('created_at')
+                                    ->limit(3)->get()->toArray();
+        if(count($listUserLimit)<3){
+            return true;
+        }
+        $result = strtotime($listUserLimit[0]['created_at'])-strtotime($listUserLimit[2]['created_at']);
+        if($result <=60){
+            return false;
+        }
+        return true;
+
+    }
     /**
      * Display the specified resource.
      *

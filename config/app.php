@@ -4,8 +4,7 @@ use Illuminate\Support\Facades\Facade;
 
 return [
     'allowedFileTypes' => 'jpg,jpeg,png,bmp,pdf,txt,docx',
-    'maxFileSize' => 5000,
-    'root' => 'D:\\Entrevista\\project-laravel\\storage\\app\\',
+    'maxFileSize' => 500,
     /*
     |--------------------------------------------------------------------------
     | Application Name

@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_limit', function (Blueprint $table) {
+        Schema::create('user_limits', function (Blueprint $table) {
             $table->id();
+            $table->string("request", 300);
+            $table->unsignedInteger("user_id");
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_limit');
+        Schema::dropIfExists('user_limits');
     }
 };

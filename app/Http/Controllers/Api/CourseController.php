@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File; 
-use Validator;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Api\UserLimitController;
+use SebastianBergmann\CodeCoverage\Report\Xml\Tests;
 
 class CourseController extends Controller
 {
@@ -27,6 +29,13 @@ class CourseController extends Controller
      */
     public function create(Request $request)
     {
+        $UserLimit = new UserLimitController();
+        if(!$UserLimit->verifyLimit('createCourse', auth()->user()->id)){
+            return response()->json([
+                "message" => "query limit exceeded"
+            ], 400);
+        }
+        $UserLimit->create('createCourse', auth()->user()->id);
         $course = new Course();
         if($request->hasFile('file')) {
             $file = $request->file('file');
@@ -61,6 +70,13 @@ class CourseController extends Controller
     }
 
     public function createMassive(Request $request){
+        $UserLimit = new UserLimitController();
+        if(!$UserLimit->verifyLimit('createCourses', auth()->user()->id)){
+            return response()->json([
+                "message" => "query limit exceeded"
+            ], 400);
+        }
+        $UserLimit->create('createCourses', auth()->user()->id);
         if(!$request->hasFile('files')) {
             return response()->json(['upload_file_not_found'], 400);
         }
@@ -106,6 +122,13 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
+        $UserLimit = new UserLimitController();
+        if(!$UserLimit->verifyLimit('showCourses', auth()->user()->id)){
+            return response()->json([
+                "message" => "query limit exceeded"
+            ], 400);
+        }
+        $UserLimit->create('showCourses', auth()->user()->id);
         $courses = Course::all();
         return response()->json($courses);
     }
@@ -152,6 +175,13 @@ class CourseController extends Controller
      */
     public function destroyLogic(Request $request)
     {
+        $UserLimit = new UserLimitController();
+        if(!$UserLimit->verifyLimit('deleteLogicCourse', auth()->user()->id)){
+            return response()->json([
+                "message" => "query limit exceeded"
+            ], 400);
+        }
+        $UserLimit->create('deleteLogicCourse', auth()->user()->id);
         $id = $request->id;
         $course = Course::find($id);
         $course->delete();
@@ -160,12 +190,17 @@ class CourseController extends Controller
 
     public function destroyPhysical(Request $request)
     {
-        
+        $UserLimit = new UserLimitController();
+        if(!$UserLimit->verifyLimit('deletePhysicalCourse', auth()->user()->id)){
+            return response()->json([
+                "message" => "query limit exceeded"
+            ], 400);
+        }
+        $UserLimit->create('deletePhysicalCourse', auth()->user()->id);
         $id = $request->id;
         $course = Course::find($id);
-        // dd($course->path);
         $course->delete();
-        if (File::delete(config('app.root').$course->path)) {
+        if (File::delete(storage_path().'//app//'.$course->path)) {
             // file was successfully deleted
             return response()->json($course);
         } else {
